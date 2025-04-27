@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+@theme inline {
+    --color-primary: #336699;
+    --color-primary2: #84A3C1;
+    --color-secondary: #C0C0C0;
+    --font-primary: var(--font-primary);
+}
+
+.font-primary {
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    font-variation-settings: normal;
+}
+
+:root {
+    --background: #ffffff;
+    --foreground: #171717;
+}
+
+body {
+    color: var(--foreground);
+    background: var(--background);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+button {
+    cursor: pointer;
+}

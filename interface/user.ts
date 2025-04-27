@@ -1,0 +1,39 @@
+export interface UsersType {
+    id: number,
+    username: string,
+    email: string,
+    email_verified_at: string,
+    status: number,
+    type: number,
+}
+
+export interface ProfileUserType {
+    id: number,
+    user_id: number,
+    first_name: string,
+    last_name: string | null,
+    place_birth: string,
+    date_birth: string
+    whatsapp: string
+    gender: string,
+    address: string,
+    postal_code: number,
+    picture: string | null,
+    about_me: string | null,
+    education: string | null,
+    last_education: string,
+    skill: string | null,
+    field_work_id: number,
+    position: string | null,
+    sallary_expectation: string | null,
+    work_city_preference: string | null,
+    is_remote: number | null,
+    resume: number | null,
+    link_portfolio: string | null,
+    social_media: string | null,
+    certificated: string | null,
+    award: string | null,
+    total_applications: number,
+    created_at: string,
+    updated_at: string
+}

@@ -1,0 +1,8 @@
+catatan localstorage
+
+a = token
+b = user id 
+c = code 
+d = expired token 
+e = type user 
+
