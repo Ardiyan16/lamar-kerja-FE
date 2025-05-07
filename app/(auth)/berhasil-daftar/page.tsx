@@ -1,9 +1,12 @@
 'use client'
 
 import Link from "next/link"
+import { useSearchParams } from "next/navigation"
 import { RiLoginCircleLine } from "react-icons/ri"
 
 const SuccessRegisterPage = () => {
+    const params = useSearchParams()
+    const type = params.get('type')
 
     return (
         <div className="py-10 px-40">
@@ -11,7 +14,7 @@ const SuccessRegisterPage = () => {
             <div className="text-2xl">Anda berhasil verifikasi silahkan cek email anda untuk link verifikasi akun! <span className="text-red-800">(catatan: Jika pesan tidak mucul di kotak masuk silahkan cek pesan di spam)</span></div>
             <div className="mt-10">
                 <Link
-                    href="/masuk"
+                    href={type == 'user' ? '/masuk' : '/masuk-perusahaan'}
                     className="!bg-primary pr-5 pl-4 py-2 border border-admPrimary !text-white backdrop-blur-sm rounded-md lg:text-lg justify-center gap-2 items-center inline-flex"
                 ><RiLoginCircleLine /> Masuk</Link>
             </div>

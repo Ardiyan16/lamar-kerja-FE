@@ -2,8 +2,14 @@
 
 @theme inline {
     --color-primary: #336699;
-    --color-primary2: #84A3C1;
+    --color-primary1: #5c98c0;
+    --color-primary2: #84cae7;
+    --color-primary3: #8ecae6;
     --color-secondary: #C0C0C0;
+    --color-secondary1: #979dac;
+    --color-blue1: #0466c8;
+    --color-blue2: #001233;
+    --color-blue3: #002855;
     --font-primary: var(--font-primary);
 }
 

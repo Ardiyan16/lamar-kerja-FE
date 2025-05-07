@@ -2,7 +2,7 @@
 
 import { Spinner } from "@/components/pages/form/button"
 import { urlApi } from "@/utils/global"
-import { Notification } from "@/utils/notification"
+import { Notif } from "@/utils/notification"
 import axios from "axios"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useState } from "react"
@@ -15,12 +15,13 @@ const VerificationPage = () => {
     const params = useSearchParams()
     const email = params.get('email')
     const token = params.get('token')
+    const type = params.get('type')
     const apiUrl = urlApi()
     const [loading, setLoading] = useState<boolean>(false)
 
     const verification = async () => {
-        if(!email && !token) {
-            return Notification('Email dan token tidak ditemukan', 'error', 2500)
+        if(!email && !token && !type) {
+            return Notif('Email dan token tidak ditemukan', 'error', 2500)
         }
 
         setLoading(true)
@@ -31,12 +32,16 @@ const VerificationPage = () => {
         }).then((response) => {
             setLoading(false)
             if(response.data.status) {
-                Notification(response.data.message, 'success', 2500)
+                Notif(response.data.message, 'success', 2500)
                 return setTimeout(() => {
-                    router.push('/masuk')
+                    if(type == 'pengguna') {
+                        router.push('/masuk')
+                    } else if(type == 'perusahaan') {
+                        router.push('/masuk-perusahaan')
+                    }
                 }, 2500)
             } else {
-                Notification(response.data.message, 'error', 2500)
+                Notif(response.data.message, 'error', 2500)
             }
         })
     }

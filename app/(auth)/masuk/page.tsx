@@ -8,9 +8,10 @@ import { useState } from "react"
 import { ButtonAuth } from "@/components/pages/form/button"
 import { useRouter } from "next/navigation"
 import { urlApi } from "@/utils/global"
-import { Notification } from "@/utils/notification"
 import axios from "axios"
 import { IsLoggedIn } from "@/hooks/is-login"
+import { RiEyeLine, RiEyeOffLine } from "react-icons/ri"
+import { Notif } from "@/utils/notification"
 
 
 const LoginPage = () => {
@@ -20,46 +21,52 @@ const LoginPage = () => {
     const [password, setPassword] = useState<string>('')
     const [loading, setLoading] = useState<boolean>(false)
     const [validation, setValidation] = useState<any>([])
+    const [showPassword, setShowPassword] = useState<boolean>(false)
     const apiUrl = urlApi()
 
-    const loginGoogle = () => {
+    const loginGoogle = async () => {
+
+        await axios.get(apiUrl + "/login-google").then((response) => {
+            
+        })
 
     }
 
     const handleSubmit = async (e: any) => {
         e.preventDefault()
-        
+
         setLoading(true)
         if (email == '' || password == '') {
             setLoading(false)
-            return Notification('Email dan Password wajib diisi', 'info', 3000)
+            return Notif('Email dan Password wajib diisi', 'info', 3000)
         }
 
         await axios.post(apiUrl + "/login", {
             email: email,
-            password: password
+            password: password,
+            type: 2
         }).then((response) => {
             setLoading(false)
-            if(response.data.status) {
+            if (response.data.status) {
                 let data = response.data.data
                 localStorage.setItem('a', data.token)
                 localStorage.setItem('b', data.user_id)
                 localStorage.setItem('c', data.code)
                 localStorage.setItem('d', data.exp_token)
                 localStorage.setItem('e', data.type)
-                Notification(response.data.message, 'success', 2500)
+                Notif(response.data.message, 'success', 2500)
                 setTimeout(() => {
-                    if(data.type === 2) {
+                    if (data.type === 2) {
                         router.push('/')
-                    } else if(data.type === 1) {
+                    } else if (data.type === 1) {
                         router.push('/admin')
                     }
                 }, 3000)
             } else {
-                if(response.data.type == 'validation_error') {
+                if (response.data.type == 'validation_error') {
                     return setValidation(response.data.message)
                 }
-                return Notification(response.data.message, 'error', 3500)
+                return Notif(response.data.message, 'error', 3500)
             }
         })
     }
@@ -113,10 +120,19 @@ const LoginPage = () => {
                                     <form onSubmit={handleSubmit}>
                                         <div>
                                             <InputAuth type="text" name="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
-
+                                            {validation.email && <small className="text-red-500">{validation.email}</small>}
                                         </div>
                                         <div className="mt-5">
-                                            <InputAuth type="password" name="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
+                                            <div className="relative">
+                                                <InputAuth type={showPassword ? 'text' : 'password'} name="password" placeholder="Kata Sandi" value={password} onChange={(e) => setPassword(e.target.value)} />
+                                                <div
+                                                    className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-500"
+                                                    onClick={() => setShowPassword(!showPassword)}
+                                                >
+                                                    {showPassword ? <RiEyeLine /> : <RiEyeOffLine />}
+                                                </div>
+                                            </div>
+                                            {validation.password && <small className="text-red-500">{validation.password}</small>}
                                         </div>
 
                                         <div className="text-right mt-3">

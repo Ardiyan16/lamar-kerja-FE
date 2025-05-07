@@ -4,6 +4,7 @@ import { NuqsAdapter } from "nuqs/adapters/next";
 import { ThemeProvider } from 'next-themes'
 import Navbar from "@/components/pages/layouts/navbar";
 import LoadingBarProvider from "@/components/progress-bar";
+import Footer from "@/components/pages/layouts/footer";
 
 export const viewport: Viewport = {
   height: "device-height",
@@ -56,6 +57,7 @@ export default function PagesLayout({
             <main className="min-h-screen">
               {children}
             </main>
+            <Footer />
           </div>
         </ThemeProvider>
     </NuqsAdapter>

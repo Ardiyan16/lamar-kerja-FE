@@ -12,9 +12,8 @@ import { UsersType } from "@/interface/user"
 import clsx from 'clsx';
 import DefaultProfile from "@/public/images/user.png"
 import callApi from "@/utils/callapi"
-import { Notification, NotifLogout } from "@/utils/notification"
+import { NotifLogout } from "@/utils/notification"
 import { ToastContainer } from "react-toastify"
-import { useRouter } from "next/navigation"
 
 const Navbar = () => {
 
@@ -46,8 +45,8 @@ const Navbar = () => {
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
     const [isMount, setIsMount] = useState<boolean>(false)
 
-    const menuMdRef = useRef(null)
-    const menuSmRef = useRef(null)
+    const menuMdRef = useRef(null!)
+    const menuSmRef = useRef(null!)
     const btnMenuMdRef = useRef<HTMLDivElement | null>(null)
 
     useDisableBodyScroll(menuOpen);
@@ -69,11 +68,25 @@ const Navbar = () => {
         const c = localStorage.getItem('c')
         const d = localStorage.getItem('d')
         const e = localStorage.getItem('e')
-        if (a && b && c && d && e) {
+        if (a && b && c && d && e == '2') {
             setIsLoggedIn(true)
         }
         setIsMount(true)
     }, [])
+
+    const logout = () => {
+        NotifLogout('silahkan klik button keluar untuk meninggalkan akses', 'question').then((result) => {
+            if (result.isConfirmed) {
+                localStorage.removeItem('a')
+                localStorage.removeItem('b')
+                localStorage.removeItem('c')
+                localStorage.removeItem('d')
+                localStorage.removeItem('e')
+                // Notif('Anda berhasil keluar', 'success', 1500)
+                setIsLoggedIn(false)
+            }
+        })
+    }
 
     return (
         <div className='relative z-50'>
@@ -100,13 +113,13 @@ const Navbar = () => {
                     <div className="flex items-center justify-end space-x-2 text-sm lg:text-base md:space-x-6">
                         {isMount ? isLoggedIn ? (
                             <button type="button">
-                                <Avatar />
+                                <Avatar onLogout={() => logout()} />
                             </button>
                         ) : (
                             <Fragment>
                                 <Link href="/masuk" className="hidden xl:block text-primary hover:text-zinc-900 hover:underline cursor-pointer text-sm">Masuk</Link>
                                 <Link href="/daftar" className="hidden xl:block text-primary hover:text-zinc-900 hover:underline cursor-pointer text-sm">Daftar</Link>
-                                <Link href={``} className="hidden md:flex px-3 py-2 rounded-md text-white bg-primary items-center gap-2">
+                                <Link href="/perusahaan" className="hidden md:flex px-3 py-2 rounded-md text-white bg-primary items-center gap-2">
                                     <RiBuilding4Line />
                                     Sebagai Perusahaan
                                 </Link>
@@ -168,7 +181,10 @@ const Navbar = () => {
 
 }
 
-const Avatar = () => {
+interface avatarType {
+    onLogout: () => void
+}
+const Avatar: FC<avatarType> = ({onLogout}) => {
     const [profileOpen, setProfileOpen] = useState<boolean>(false)
     const toggleRefs = useRef(null)
     const [data, setData] = useState<UsersType>()
@@ -185,7 +201,10 @@ const Avatar = () => {
     }
 
     useEffect(() => {
-        fetchData()
+        const type = localStorage.getItem('e')
+        if(type == '2') {
+            fetchData()
+        }
     }, [])
 
     return (
@@ -209,8 +228,8 @@ const Avatar = () => {
                     </div>
                     <RiArrowDownSLine className={clsx("w-4 h-4 transition duration-500 transform-gpu", profileOpen && "rotate-180")} />
                     <AnimatePresence>
-                {profileOpen && <DropdownProfile onClose={() => setProfileOpen(false)} excludeRefs={toggleRefs} nama={data?.username} type={data?.type} />}
-            </AnimatePresence>
+                        {profileOpen && <DropdownProfile onClose={() => setProfileOpen(false)} excludeRefs={toggleRefs} nama={data?.username} type={data?.type} onLogout={() => onLogout()} />}
+                    </AnimatePresence>
                 </div>
 
             </div>
@@ -224,33 +243,17 @@ interface dropdownProfile {
     excludeRefs: any,
     nama: string | undefined,
     type: number | undefined,
+    onLogout: () => void
 }
 
-const DropdownProfile: FC<dropdownProfile> = ({ onClose, excludeRefs, nama, type }) => {
+const DropdownProfile: FC<dropdownProfile> = ({ onClose, excludeRefs, nama, type, onLogout }) => {
 
     const profileRef = useRef<HTMLDivElement>(null!);
-    const router = useRouter()
     useOnClickOutside(profileRef, (event) => {
         if (excludeRefs.current && !excludeRefs.current.contains(event.target as Node)) {
             onClose()
         }
     })
-
-    const logout = () => {
-        NotifLogout('silahkan klik button keluar untuk meninggalkan akses', 'question').then((result) => {
-            if(result.isConfirmed) {
-                localStorage.removeItem('a')
-                localStorage.removeItem('b')
-                localStorage.removeItem('c')
-                localStorage.removeItem('d')
-                localStorage.removeItem('e')
-                Notification('Anda berhasil keluar', 'success', 1500)
-                setTimeout(() => {
-                    router.push('/masuk')
-                }, 1500)
-            }
-        })
-    }
 
     return (
         <motion.div
@@ -273,7 +276,7 @@ const DropdownProfile: FC<dropdownProfile> = ({ onClose, excludeRefs, nama, type
                 </div></Link>
             </div>
             <div className="border-t border-t-primary p-1">
-                <div onClick={() => logout()} className="flex items-center justify-start gap-4 hover:bg-gray-200 text-primary cursor-pointer px-4 py-2 rounded">
+                <div onClick={() => onLogout()} className="flex items-center justify-start gap-4 hover:bg-gray-200 text-primary cursor-pointer px-4 py-2 rounded">
                     <RiLogoutBoxRLine className="w-5 h-5" />
                     <span>Logout</span>
                 </div>
