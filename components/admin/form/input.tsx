@@ -30,7 +30,7 @@ export const Input: FC<inputProps> = ({
             <div className="flex flex-wrap justify-between items-center">
                 <label htmlFor={name} className="block text-sm font-medium mb-2">{label} {mandatory && (<span className="text-red-600">*</span>)}</label>
             </div>
-            <input type={type} id={name} value={value} onChange={onChange} className="py-2.5 sm:py-3 px-4 block w-full border border-gray-300 rounded-lg sm:text-sm focus:border-primary focus:ring-primary disabled:opacity-50 disabled:pointer-events-none" placeholder={placeholder} disabled={disabled} />
+            <input type={type} id={name} value={value} name={name} onChange={onChange} className="py-2.5 sm:py-3 px-4 block w-full border border-gray-300 rounded-lg sm:text-sm focus:border-primary focus:ring-primary disabled:opacity-50 disabled:pointer-events-none" placeholder={placeholder} disabled={disabled} />
         </div>
     )
 }

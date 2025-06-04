@@ -1,0 +1,35 @@
+:root {
+    --quill-toolbar-color: #1C252E;
+    --quill-toolbar-color-dark: #e5e7eb;
+    --quill-border-color: #c8d1db;
+    --quill-border-color-dark: #2F3943;
+}
+
+html {
+    --qbc: var(--quill-border-color);
+    --qtc: var(--quill-toolbar-color);
+}
+
+html.dark {
+    --qbc: var(--quill-border-color-dark);
+    --qtc: var(--quill-toolbar-color-dark);
+}
+
+
+.ql-editor{
+    min-height:200px;
+}
+
+.ql-toolbar.ql-snow {
+    border-radius: 5px 5px 0px 0px;
+    border-color: var(--qbc);
+}
+
+.ql-container.ql-snow {
+    border-radius: 0px 0px 5px 5px;
+    border-color: var(--qbc); 
+}
+
+.ql-formats {
+    color: var(--qtc);
+}

@@ -9,7 +9,7 @@ const FooterManage = () => {
                 copyright - LamarKerja.com
             </span>
         </div>
-      )
+    )
 }
 
 export default FooterManage

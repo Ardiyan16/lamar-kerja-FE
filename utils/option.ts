@@ -1,10 +1,15 @@
 
-export interface OptionSelect {
-    value: string | number | null,
-    label: string | number | null
+export interface OptionType {
+    value: string | number,
+    label: string
 }
 
-export const OptionJmlPegawai = () => {
+export interface OptionNumberType {
+    value: number | string,
+    label: string
+}
+
+export const OptionTotalEmployee = () => {
     const option = [
         { value: "1 - 10 karyawan",  label: "1 - 10 karyawan" },
         { value: "11 - 50 karyawan",  label: "11 - 50 karyawan" },
@@ -27,12 +32,41 @@ export const OptionGender = () => {
     return option
 }
 
+export const OptionLink = () => {
+    const option = [
+        { value: "Website",  label: "website" },
+        { value: "Maps",  label: "maps" },
+    ]
+    return option
+}
+
+export const OptionSosmed = () => {
+    const option = [
+        { value: "instagram",  label: "instagram" },
+        { value: "tiktok",  label: "tiktok" },
+        { value: "x",  label: "x" },
+        { value: "facebook",  label: "facebook" },
+        { value: "youtube",  label: "youtube" },
+        { value: "linkedin",  label: "linkedin" },
+        { value: "telegram",  label: "telegram" },
+    ]
+    return option
+}
+
 export const OptionStudy = () => {
     const option = [
         { value: "SD",  label: "SD" },
         { value: "SMP",  label: "SMP" },
         { value: "SMA/SMK",  label: "SMA/SMK" },
+        { value: "D1", label: "D1" },
+        { value: "D2", label: "D2" },
+        { value: "D3", label: "D4" },
+        { value: "S1/D4", label: "S1/D4" },
+        { value: "S2", label: "S2" },
+        { value: "S3", label: "S3" },
     ]
+
+    return option
 }
 
 export const optionReasonReportPostings = () => {

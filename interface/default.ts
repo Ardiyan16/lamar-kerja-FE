@@ -21,9 +21,20 @@ export interface fieldWorkTypes {
 }
 
 export interface subFieldWorkTypes {
-    id: number,
-    field_work_id: number,
+    id: number | string,
+    field_work_id: number | string,
+    field_name: string,
     name_sub_field: string,
     created_at: string,
     updated_at: string
+}
+
+export interface socialMediaTypes {
+    platform: string,
+    link: string
+}
+
+export interface galleryTypes {
+    index: string | number,
+    name: string
 }

@@ -1,6 +1,7 @@
 import FooterManage from "@/components/admin/layouts/footer";
 import NavbarManage from "@/components/admin/layouts/navbar";
 import Sidebar from "@/components/admin/layouts/sidebar";
+import { CheckAuthMember } from "@/components/pages/navigation/check-auth";
 import LoadingBarProvider from "@/components/progress-bar";
 import { Provider } from "jotai";
 import { Metadata, Viewport } from "next";
@@ -48,6 +49,7 @@ export default function MemberLayout({
                         <div className="flex h-screen overflow-hidden">
                             <Sidebar />
                             <div className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden text-gray-800 bg-gray-200">
+                            <CheckAuthMember />
                                 <NavbarManage />
                                 <main className="flex-grow text-sm md:text-base">
                                     {children}

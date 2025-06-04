@@ -182,7 +182,7 @@ export const ButtonSubmit: FC<buttonSubmit> = ({
 }) => {
     
     return (
-        <button className={`flex items-center justify-center transition-colors duration-300 text-white ${loading ? 'bg-primary2' : 'bg-primary'}  hover:bg-primary1 px-4 py-2 text-base rounded shadow-md`} type={type}>{loading ? '' : icon} {loading ? <Spinner2 size="md" /> : children} </button>
+        <button className={`flex items-center justify-center transition-colors duration-300 text-white ${loading ? 'bg-primary2' : 'bg-primary'}  hover:bg-primary1 px-4 py-2 text-base rounded shadow-md`} type={type}>{loading ? '' : icon} &nbsp; {loading ? <Spinner2 size="md" text="Menyimpan"/> : children} </button>
     )
 
 }

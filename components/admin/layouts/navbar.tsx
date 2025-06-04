@@ -9,7 +9,7 @@ import { AnimatePresence, motion } from "motion/react"
 import { useOnClickOutside } from "usehooks-ts"
 import Link from "next/link"
 import clsx from "clsx"
-import { NotifLogout } from "@/utils/notification"
+import { Notif, NotifLogout } from "@/utils/notification"
 import { useRouter } from "next/navigation"
 import { UsersType } from "@/interface/user"
 import { avatarProfile } from "@/atom/avatar"
@@ -84,7 +84,10 @@ const Avatar = () => {
                 localStorage.removeItem('c')
                 localStorage.removeItem('d')
                 localStorage.removeItem('e')
-                router.push('/masuk-perusahaan')
+                Notif('Anda berhasil keluar', 'success', 2000)
+                setTimeout(() => {
+                    router.push('/masuk-perusahaan')
+                }, 2000)
             }
         })
     }

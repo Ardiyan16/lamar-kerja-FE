@@ -4,16 +4,19 @@ import Modal from "@/components/admin/card/modal"
 import Button, { ButtonSubmit } from "@/components/admin/form/button"
 import { Input, ValidationText } from "@/components/admin/form/input"
 import Breadcrumbs from "@/components/pages/navigation/breadcrumbs/breadcrumbs"
-import { fieldWorkTypes } from "@/interface/default"
+import { fieldWorkTypes, subFieldWorkTypes } from "@/interface/default"
 import callApi from "@/utils/callapi"
 import { customStylesTable } from "@/utils/global"
-import { ConfirmDelete, Notif } from "@/utils/notification"
+import { OptionType } from "@/utils/option"
 import { useEffect, useState } from "react"
 import DataTable, { TableColumn } from "react-data-table-component"
 import { HiOutlinePlusCircle } from "react-icons/hi2"
+import Select, { SingleValue } from 'react-select';
 import { RiCloseLine, RiDeleteBin6Line, RiEditBoxLine, RiSaveLine } from "react-icons/ri"
+import { ConfirmDelete, Notif } from "@/utils/notification"
 
-const BidangKerjaPage = () => {
+
+const SubBidangKerjaPage = () => {
 
     const breadcrumbs = [
         {
@@ -25,20 +28,25 @@ const BidangKerjaPage = () => {
             value: "data"
         },
         {
-            label: "bidang kerja",
-            value: "bidang kerja"
+            label: "sub bidang kerja",
+            value: "sub bidang kerja"
         },
     ]
 
-    const column: TableColumn<fieldWorkTypes>[] = [
+    const column: TableColumn<subFieldWorkTypes>[] = [
         {
             'name': 'No',
             cell: (row, rowIndex) => rowIndex + 1,
             'sortable': false
         },
         {
-            'name': 'Nama Industri',
+            'name': 'Nama Bidang',
             cell: (row) => row.field_name,
+            'sortable': false
+        },
+        {
+            'name': 'Nama Sub Bidang',
+            cell: (row) => row.name_sub_field,
             'sortable': false
         },
         {
@@ -54,18 +62,21 @@ const BidangKerjaPage = () => {
 
     const [search, setSearch] = useState<string>('')
     const [loading, setLoading] = useState<boolean>(false)
-    const [data, setData] = useState<fieldWorkTypes[]>([])
-    const [filter, setFilter] = useState<fieldWorkTypes[]>([])
     const [showModal, setShowModal] = useState<boolean>(false)
-    const [fieldName, setFieldName] = useState<string>('')
-    const [id, setId] = useState<number | string>('')
+    const [data, setData] = useState<subFieldWorkTypes[]>([])
+    const [filter, setFilter] = useState<subFieldWorkTypes[]>([])
+    const [option, setOption] = useState<OptionType[]>([])
     const [validation, setValidation] = useState<any>([])
-    const urlApi = '/admin/field-work'
+    const [id, setId] = useState<number | string>('')
+    const [selectField, setSelectField] = useState<SingleValue<OptionType>>(null)
+    const [subFieldName, setSubFieldName] = useState<string>('')
+
+    const urlApi = '/admin/sub-field-work'
 
     const fetchData = async () => {
         try {
             const response = await callApi.get(urlApi)
-            const data = response.data.data 
+            const data = response.data.data
             setData(data)
             setFilter(data)
         } catch (error) {
@@ -73,26 +84,46 @@ const BidangKerjaPage = () => {
         }
     }
 
-    useEffect(() => {
-        fetchData()
-    }, [])
+    const fetchFieldWork = async () => {
+        try {
+            const response = await callApi.get('/admin/field-work')
+            const data = response.data.data
+            const initOpt: OptionType[] = []
+            data.map((item: fieldWorkTypes) => {
+                const temp: OptionType = {
+                    label: item.field_name,
+                    value: item.id
+                }
+                initOpt.push(temp)
+            })
+            setOption(initOpt)
+        } catch (error) {
+            console.error(error)
+        }
+    }
 
     useEffect(() => {
-        const result = data.filter((item) => {
-            return item.field_name.toLowerCase().match(search.toLowerCase());
-        });
-        setFilter(result);
-    }, [search])
+        fetchData()
+        fetchFieldWork()
+    }, [])
+
+    const onChange = (selected: OptionType | null) => {
+        setSelectField(selected)
+    }
 
     const showAdd = () => {
         setId('')
-        setFieldName('')
+        setSelectField(null)
+        setSubFieldName('')
         setShowModal(true)
     }
 
-    const showEdit = (data: fieldWorkTypes) => {
+    const showEdit = (data: subFieldWorkTypes) => {
         setId(data.id)
-        setFieldName(data.field_name)
+        setSelectField({
+            value: data.field_work_id, label: data.field_name
+        })
+        setSubFieldName(data.name_sub_field)
         setShowModal(true)
     }
 
@@ -104,30 +135,32 @@ const BidangKerjaPage = () => {
         e.preventDefault()
         setLoading(true)
 
-        await callApi.post(urlApi + '/save', {
+        await callApi.post(urlApi + "/save", {
             id: id,
-            field_name: fieldName
+            field_work_id: selectField?.value,
+            name_sub_field: subFieldName
         }).then((response) => {
             setLoading(false)
-            if(response.data.status) {
+            if (response.data.status) {
                 Notif(response.data.message, 'success', 2000)
-                setFieldName('')
+                setSelectField(null)
+                setSubFieldName('')
                 setShowModal(false)
                 fetchData()
                 setValidation([])
             } else {
-                if(response.data.type == 'validation_error') {
+                if (response.data.type == "validation_error") {
                     return setValidation(response.data.message)
                 }
-                return Notif(response.data.message, 'error', 2000)
+                Notif(response.data.message, 'error', 2000)
             }
         }).catch((error) => {
             console.error(error)
         })
     }
 
-    const handleDelete = (data: fieldWorkTypes) => {
-        let message = `Data bidang kerja ${data.field_name} akan dihapus dan tidak dapat dikembalikan!`
+    const handleDelete = (data: subFieldWorkTypes) => {
+        let message = `Data sub bidang kerja ${data.name_sub_field} akan dihapus dan tidak dapat dikembalikan!`
         ConfirmDelete(message, 'question').then((result) => {
             if(result.isConfirmed) {
                 callApi.get(urlApi + '/delete/' + data.id).then((response) => {
@@ -145,7 +178,7 @@ const BidangKerjaPage = () => {
     return (
         <div className="p-4 md:p-10">
             <div className="flex flex-wrap gap-x-4 gap-y-2 w-full items-center justify-between">
-                <div className="text-xl md:text-2xl font-bold">Bidang Kerja</div>
+                <div className="text-xl md:text-2xl font-bold">Sub Bidang Kerja</div>
                 <div className="flex items-center">
                     <Breadcrumbs data={breadcrumbs} />
                 </div>
@@ -176,19 +209,31 @@ const BidangKerjaPage = () => {
                     />
                 </div>
             </div>
-            <Modal 
+            <Modal
                 open={showModal}
                 closeFn={() => setShowModal(false)}
-                titleContent = "Form Bidang Kerja"
+                titleContent="Form Bidang Kerja"
                 size="lg"
             >
                 <form onSubmit={handleSubmit} className="mt-5 mb-5">
                     <div>
-                        <input type="hidden" name="id" value={id} />
-                        <Input label="Nama Bidang Kerja" type="text" value={fieldName} mandatory={true} name="field_name" onChange={(e) => setFieldName(e.target.value)} placeholder="" disabled={false}  />
-                        {validation.field_name && <ValidationText text={validation.field_name} />}
+                        <label className="block text-sm font-medium mb-2">Pilih Bidang Kerja <span className="text-red-600">*</span></label>
+                        <Select
+                            options={option}
+                            value={selectField}
+                            onChange={onChange}
+                            className="basic-single"
+                            placeholder="Pilih Bidang Kerja"
+                            isClearable
+                        />
+                        {validation.field_work_id && <ValidationText text={validation.field_work_id} />}
                     </div>
-                    <hr className="mt-5 text-gray-300"/>
+                    <div>
+                        <input type="hidden" name="id" value={id} />
+                        <Input label="Nama Sub Bidang Kerja" type="text" value={subFieldName} mandatory={true} name="name_sub_field" onChange={(e) => setSubFieldName(e.target.value)} placeholder="" disabled={false} />
+                        {validation.name_sub_field && <ValidationText text={validation.name_sub_field} />}
+                    </div>
+                    <hr className="mt-5 text-gray-300" />
                     <div className="mt-5">
                         <ButtonSubmit icon={<RiSaveLine />} loading={loading} type="submit">Simpan</ButtonSubmit>
                     </div>
@@ -199,4 +244,5 @@ const BidangKerjaPage = () => {
 
 }
 
-export default BidangKerjaPage
+export default SubBidangKerjaPage
+

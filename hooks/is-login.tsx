@@ -44,7 +44,13 @@ export const UseLoggedInMember = () => {
 
         const fetchData = async () => {
             try {
-                const response = await callApi.get('/admin/check-auth')
+                let url = ''
+                if(e === '3') {
+                    url = '/company/check-auth'
+                } else if(e === '1') {
+                    url = '/admin/check-auth'
+                }
+                const response = await callApi.get(url)
                 
                 if(response.data.status == false) {
                     localStorage.removeItem('a')
